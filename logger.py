@@ -15,10 +15,15 @@ LOGGING_CONFIG = {
             "interval": 1,
             "backupCount": 24,
         },
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+        },
     },
     "loggers": {
         "": {
-            "handlers": ["file"],
+            "handlers": ["console", "file"],
             "level": "INFO",
         },
     },

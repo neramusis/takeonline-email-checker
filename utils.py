@@ -14,28 +14,14 @@ def parse_order_id(external_id: str) -> str:
     return external_id[:-3]
 
 
-def is_visible(element: Any) -> bool:
-    if element.parent.name in ["style", "script", "[document]", "head", "title"]:
-        return False
-    elif isinstance(element, Comment):
-        return False
-    return True
-
-
-def parse_visible_info(email_html: str) -> str:
-    soup = BeautifulSoup(email_html, "html.parser")
-    visible_texts = []
-    for element in soup.recursiveChildGenerator():
-        if element.name == "a" and element.has_attr("href"):
-            # Add the text and URL from the anchor tags
-            visible_texts.append(element.get_text() + " (" + element["href"] + ")")
-        elif element.name is None and is_visible(element):
-            visible_texts.append(element.strip())
-    return " ".join(visible_texts)
+def parse_html_file(email_html):
+    soup = BeautifulSoup(email_html, "lxml")
+    text = soup.get_text(separator="\n", strip=True)
+    return text
 
 
 def prepare_email_text(email_html: str) -> str:
-    text = parse_visible_info(email_html)
+    text = parse_html_file(email_html)
     return text[:MAX_EMAIL_TEXT_LENGTH]
 
 

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 endpoint = "https://graph.microsoft.com/v1.0/me/mailFolders/Inbox/messages"
 
 
-async def query_emails(order_id: str, access_token: str) -> list:
+async def query_emails(order_id: str, access_token: str, days: int = 1) -> list:
     session = aiohttp.ClientSession()
     params = {
         "$top": 10,
@@ -24,7 +24,7 @@ async def query_emails(order_id: str, access_token: str) -> list:
             headers={"Authorization": "Bearer " + access_token},
         )
         body = await resp.json()
-        twenty_four_hours_ago = datetime.utcnow() - timedelta(days=1)
+        twenty_four_hours_ago = datetime.utcnow() - timedelta(days=days)
         return [
             email
             for email in body.get("value", [])
