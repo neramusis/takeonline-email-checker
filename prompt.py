@@ -7,8 +7,8 @@ I will provide you an email subject and body from online shop. Please answer fou
 - find order id;
 - pick status from:
 	0 – payment confirmation;
-	1 – order confirmation;
-	2 – shipped / ready for shippment;
+	1 – order confirmation or order is ready to be shipped;
+	2 – order shipped;
 	3 – order cancelation;
 	4 – client service response;
 - find tracking id if exists, which sometimes is in tracking URL as a query parameter or path. If you find two or more tracking ids, format it as a list;
