@@ -23,7 +23,7 @@ LOGGING_CONFIG = {
     },
     "loggers": {
         "": {
-            "handlers": ["console", "file"],
+            "handlers": ["file"],
             "level": "INFO",
         },
     },

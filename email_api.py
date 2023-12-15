@@ -33,6 +33,6 @@ async def query_emails(order_id: str, access_token: str, days: int = 1) -> list:
         ]
     except Exception as exc:
         logger.error(f"Error while doing query to emails. `{exc}`.")
-        raise exc
+        return []
     finally:
         await session.close()
