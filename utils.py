@@ -25,21 +25,30 @@ def prepare_email_text(email_html: str) -> str:
     return text[:MAX_EMAIL_TEXT_LENGTH]
 
 
-def parse_json(text: str) -> dict | None:
+def parse_json(text: str) -> dict:
+    """Parse JSON from openai api response."""
     cleaned_text = re.sub(r'^```json|```|"""', "", text, flags=re.MULTILINE).strip()
     try:
         data = json.loads(cleaned_text)
-        keys_to_check = ["order_id", "status", "tracking_id"]
-        if all(key in data for key in keys_to_check):
-            return data
-        logger.error(
-            f"Parsed response from openai does not contain all keys. "
-            f"Parsed data: `{data}`."
-        )
-        return None
+        if not data.get("status"):
+            data["status"] = None
+            logger.warning(
+                f"'status' is not in openai api JSON response. "
+                f"Full response: `{data}`.",
+            )
+        if not data.get("tracking_id"):
+            data["tracking_id"] = None
+            logger.warning(
+                f"'tracking_id' is not in openai api JSON response. "
+                f"Full response: `{data}`.",
+            )
+        return data
     except json.JSONDecodeError as exc:
         logger.error(f"Can't parse json. Text value: `{text}`. Error: `{exc!r}`.")
-        return None
+        return {
+            "status": None,
+            "tracking_id": None,
+        }
 
 
 def convert_iso_to_mysql_datetime(iso_datetime_str: str) -> str:

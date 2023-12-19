@@ -1,16 +1,14 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Any
 
 import aiohttp
-from bs4 import BeautifulSoup, Comment
 
 logger = logging.getLogger(__name__)
 
-endpoint = "https://graph.microsoft.com/v1.0/me/mailFolders/Inbox/messages"
+endpoint = "https://graph.microsoft.com/v1.0/me/messages"
 
 
-async def query_emails(order_id: str, access_token: str, days: int = 1) -> list:
+async def query_emails(order_id: str, access_token: str, days: int) -> list:
     session = aiohttp.ClientSession()
     params = {
         "$top": 10,

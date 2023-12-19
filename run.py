@@ -18,20 +18,22 @@ logger = logging.getLogger(__name__)
 TIME_BETWEEN_RUNS = 3600
 
 
-async def _get_emails(order_id: str, access_token: str) -> list:
+async def get_emails(order_id: str, access_token: str, days: int = 1) -> list:
     logger.info(f"Querying emails API with order ID: `{order_id}`.")
     emails = await email_api.query_emails(
         access_token=access_token,
         order_id=order_id,
+        days=days,
     )
     return emails
 
 
-async def _process_email(external_id: str, prompt_text: str) -> dict | None:
+async def process_email(order_id: str, email: dict) -> dict:
+    prompt_text = prompt.get_prompt(email, order_id=order_id)
     open_api_response = await openai_api.get_openai_response(prompt_text)
     open_api_json = utils.parse_json(open_api_response)
     logger.info(
-        f"External id: `{external_id}`, response from openai: " f"`{open_api_json}`.",
+        f"Order id: `{order_id}`, response from openai: " f"`{open_api_json}`.",
     )
     return open_api_json
 
@@ -46,7 +48,7 @@ async def run_batch() -> None:
     access_token = await ms_api.get_access_token()
     for nr, external_id in enumerate(unique_external_ids):
         order_id = str(external_id[:-3])
-        emails = await _get_emails(order_id, access_token)
+        emails = await get_emails(order_id, access_token)
         logger.info(
             f"External id nr: `{nr}`, external id: `{external_id}`,"
             f" emails found: `{len(emails)}`.",
@@ -59,26 +61,20 @@ async def run_batch() -> None:
             logger.info(
                 f"Processing email with receive date: `{email['receivedDateTime']}`.",
             )
-            prompt_text = prompt.get_prompt(email)
-            open_api_json = await _process_email(external_id, prompt_text)
-            if (
-                open_api_json
-                and str(open_api_json["order_id"]).replace(" ", "") == order_id
-            ):
-                database.store_response(
-                    order_id=order_id,
-                    open_api_json=open_api_json,
-                    external_id=external_id,
-                    email_date=utils.convert_iso_to_mysql_datetime(
-                        email["receivedDateTime"]
-                    ),
-                    email_id=email["id"],
-                )
-                await tradeonline_api.update_order(
-                    external_id=external_id,
-                    status=open_api_json["status"],
-                    tracking_id=open_api_json["tracking_id"],
-                )
+            open_api_json = await process_email(order_id, email)
+            # await tradeonline_api.update_order(
+            #     external_id=external_id,
+            #     status=open_api_json["status"],
+            #     tracking_id=open_api_json["tracking_id"],
+            # )
+            database.store_response(
+                open_api_json=open_api_json,
+                external_id=external_id,
+                email_date=utils.convert_iso_to_mysql_datetime(
+                    email["receivedDateTime"]
+                ),
+                email_id=email["id"],
+            )
 
 
 def main() -> None:

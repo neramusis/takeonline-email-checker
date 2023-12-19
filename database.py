@@ -1,8 +1,8 @@
 import logging
 
-from sqlalchemy import (Boolean, Column, DateTime, Integer, String,
+from sqlalchemy import (Column, DateTime, Integer, String,
                         create_engine)
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from config import Settings
@@ -55,36 +55,34 @@ def store_order_stats(
 
 
 def store_response(
-    order_id: str,
     open_api_json: dict,
     external_id: str,
     email_date: str,
     email_id: str,
 ) -> None:
     try:
-        logger.info(f"Store for order id: `{order_id}`.")
-        if str(open_api_json["order_id"]).replace(" ", "") == order_id:
-            if isinstance(open_api_json["tracking_id"], list):
-                for tracking_id in open_api_json["tracking_id"]:
-                    store_order_stats(
-                        external_id=external_id,
-                        email_date=email_date,
-                        email_id=email_id,
-                        status=open_api_json["status"],
-                        tracking_id=str(tracking_id),
-                    )
-            else:
+        logger.info(f"Store for order id: `{external_id}`.")
+        if isinstance(open_api_json["tracking_id"], list):
+            for tracking_id in open_api_json["tracking_id"]:
                 store_order_stats(
                     external_id=external_id,
                     email_date=email_date,
                     email_id=email_id,
                     status=open_api_json["status"],
-                    tracking_id=(
-                        str(open_api_json["tracking_id"])
-                        if open_api_json["tracking_id"]
-                        else None
-                    ),
+                    tracking_id=str(tracking_id),
                 )
+        else:
+            store_order_stats(
+                external_id=external_id,
+                email_date=email_date,
+                email_id=email_id,
+                status=open_api_json["status"],
+                tracking_id=(
+                    str(open_api_json["tracking_id"])
+                    if open_api_json["tracking_id"]
+                    else None
+                ),
+            )
     except Exception as exc:
         logger.error(f"Error storing order stats. Error: `{exc!r}`.")
 
