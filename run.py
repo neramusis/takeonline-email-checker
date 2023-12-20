@@ -62,11 +62,11 @@ async def run_batch() -> None:
                 f"Processing email with receive date: `{email['receivedDateTime']}`.",
             )
             open_api_json = await process_email(order_id, email)
-            # await tradeonline_api.update_order(
-            #     external_id=external_id,
-            #     status=open_api_json["status"],
-            #     tracking_id=open_api_json["tracking_id"],
-            # )
+            await tradeonline_api.update_order(
+                external_id=external_id,
+                status=open_api_json["status"],
+                tracking_id=open_api_json["tracking_id"],
+            )
             database.store_response(
                 open_api_json=open_api_json,
                 external_id=external_id,
