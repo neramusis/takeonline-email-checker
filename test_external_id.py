@@ -19,6 +19,7 @@ async def run_external_id(external_id: str, save: int) -> None:
     access_token = await ms_api.get_access_token()
     order_id = str(external_id[:-3])
     emails = await get_emails(order_id, access_token, days=DAYS_TO_CHECK_EMAIL)
+    emails.reverse()
     for email in emails:
         logger.info(f"Processing email from date: `{email['receivedDateTime']}`")
         if save:

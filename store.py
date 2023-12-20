@@ -42,11 +42,6 @@ async def store_response(
                     else None
                 ),
             )
-            await tradeonline_api.update_order(
-                external_id=external_id,
-                status=open_api_json["status"],
-                tracking_id=open_api_json["tracking_id"],
-            )
             if open_api_json["status"]:
                 await tradeonline_api.update_order(
                     external_id=external_id,

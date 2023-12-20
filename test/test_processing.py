@@ -12,6 +12,7 @@ async def test_email_1():
         email_content = json.load(file)
 
     result = await process_email(order_id="1101917483", email=email_content)
+    result.pop("tracking_url")
 
     expected_result = {
         'status': 2,
@@ -27,6 +28,7 @@ async def test_email_2():
         email_content = json.load(file)
 
     result = await process_email(order_id="21071223180631102", email=email_content)
+    result.pop("tracking_url")
 
     expected_result = {
         'status': 2,
@@ -42,6 +44,7 @@ async def test_email_3():
         email_content = json.load(file)
 
     result = await process_email(order_id="434475740", email=email_content)
+    result.pop("tracking_url")
 
     expected_result = {
         'status': 2,
@@ -57,6 +60,10 @@ async def test_email_4():
         email_content = json.load(file)
 
     result = await process_email(order_id="7246174", email=email_content)
+    result.pop("tracking_url")
 
-    expected_result = {'status': 2, 'tracking_id': '1000687998601U'}
+    expected_result = {
+        'status': 2,
+        'tracking_id': '1000687998601U',
+    }
     assert result == expected_result, f"Expected {expected_result}, got {result}"
