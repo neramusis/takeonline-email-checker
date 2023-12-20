@@ -11,6 +11,7 @@ import openai_api
 
 logger = logging.getLogger(__name__)
 MAX_EMAIL_TEXT_LENGTH = 3000
+REQUEST_TIMEOUT = 15
 
 
 def parse_order_id(external_id: str) -> str:
@@ -57,7 +58,7 @@ def parse_tracking_id(text: str) -> str | None:
 async def _get_tracking_id_from_url(url: str) -> str | None:
     logger.info(f"Getting tracking URL: `{url}`.")
     try:
-        resp = requests.get(url, allow_redirects=True)
+        resp = requests.get(url, allow_redirects=True, timeout=REQUEST_TIMEOUT)
         logger.info(f"URL request responded with status: `{resp.status_code}`.")
         if resp.status_code != 200:
             return None
