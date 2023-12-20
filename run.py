@@ -8,6 +8,7 @@ import email_api
 import ms_api
 import openai_api
 import prompt
+import store
 import tradeonline_api
 import utils
 from logger import LOGGING_CONFIG
@@ -53,6 +54,7 @@ async def run_batch() -> None:
             f"External id nr: `{nr}`, external id: `{external_id}`,"
             f" emails found: `{len(emails)}`.",
         )
+        emails.reverse()
         for email in emails:
             logger.info("Checking if email needs processing.")
             if database.check_email_exists(email["id"]):
@@ -62,12 +64,7 @@ async def run_batch() -> None:
                 f"Processing email with receive date: `{email['receivedDateTime']}`.",
             )
             open_api_json = await process_email(order_id, email)
-            await tradeonline_api.update_order(
-                external_id=external_id,
-                status=open_api_json["status"],
-                tracking_id=open_api_json["tracking_id"],
-            )
-            database.store_response(
+            await store.store_response(
                 open_api_json=open_api_json,
                 external_id=external_id,
                 email_date=utils.convert_iso_to_mysql_datetime(
