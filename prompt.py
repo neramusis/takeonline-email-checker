@@ -11,7 +11,9 @@ I will provide you an order_id, an email subject and a body from online shop . P
         2 – order shipped;
         3 – order cancelation;
         4 – client service response;
-- find tracking id/number. If you find two or more tracking ids, format it as a list, tracking number should NOT be the same as provided order_id
+- find tracking id/number. If you find two or more tracking ids/numbers, format it as a list. Consider these rules when picking tracking id/number:
+  - tracking id/number should NOT be the same as provided order_id;
+  - tracking id/number should NOT be a words about tracking link. It must be an ID or a number.
 
 order_id: {order_id};
 subject: {subject};

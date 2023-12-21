@@ -33,6 +33,8 @@ async def process_email(order_id: str, email: dict) -> dict:
     prompt_text = prompt.get_prompt(email, order_id=order_id)
     open_api_response = await openai_api.get_openai_response(prompt_text)
     open_api_json = await utils.parse_order_json(open_api_response)
+    if str(open_api_json["tracking_id"]) in order_id:
+        open_api_json["tracking_id"] = None
     return open_api_json
 
 
