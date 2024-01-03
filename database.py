@@ -1,7 +1,6 @@
 import logging
 
-from sqlalchemy import (Column, DateTime, Integer, String,
-                        create_engine)
+from sqlalchemy import Column, DateTime, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 

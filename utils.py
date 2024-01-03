@@ -13,17 +13,24 @@ def parse_order_id(external_id: str) -> str:
     return external_id[:-3]
 
 
-def parse_html_file(email_html: str) -> str:
+def parse_html_file(email_html):
+    # Parse the HTML content
     soup = BeautifulSoup(email_html, "lxml")
-    elements = []
-    for element in soup.find_all():
-        if not any(child for child in element.children if child.name is not None):
-            if element.name in ("script", "style"):
-                continue
-            text = element.get_text(strip=True)
-            if text:
-                elements.append(text)
-    return "\n".join(elements)
+
+    # Extract and clean text
+    extracted_text = []
+    for element in soup.find_all(string=True):
+        text = element.strip()
+        if text and element.parent.name not in [
+            "style",
+            "script",
+            "[document]",
+            "head",
+            "title",
+        ]:
+            extracted_text.append(text)
+
+    return "\n".join(extracted_text)
 
 
 def prepare_email_text(email_html: str) -> str:

@@ -12,8 +12,12 @@ I will provide you an order_id, an email subject and a body from online shop . P
         3 – order cancelation;
         4 – client service response;
 - find tracking id/number. If you find two or more tracking ids/numbers, format it as a list. Consider these rules when picking tracking id/number:
+  - tracking id/number can also be named as 'sent package number';
+  - tracking id/number can also be named as 'shipment number';
+  - tracking id/number should NOT be a number which you provide for delivery man for security;
   - tracking id/number should NOT be the same as provided order_id;
-  - tracking id/number should NOT be a words about tracking link. It must be an ID or a number.
+  - tracking id/number should NOT be a words about tracking link. It must be an ID or a number;
+  - tracking id/number should NOT be words like 'SEGUI LA SPEDIZIONE'.
 
 order_id: {order_id};
 subject: {subject};
@@ -27,12 +31,12 @@ Only answer in JSON, without any explanation. Copy tracking URL from provided bo
 or
 {{
   "status": 2,
-  "tracking_id": "54321",
+  "tracking_id": "227798I047590",
 }}
 or
 {{
   "status": 2,
-  "tracking_id": ["12345", "23341"],
+  "tracking_id": ["227798I047590", "227798I047591"],
 }}
 
 """

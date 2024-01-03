@@ -63,3 +63,15 @@ async def test_email_4():
         'tracking_id': '1000687998601U',
     }
     assert result == expected_result, f"Expected {expected_result}, got {result}"
+
+
+@pytest.mark.asyncio
+async def test_email_5():
+    file_path = 'test/fixtures/27201249613_ad_2023-12-22T08:45:56Z.json'
+    with open(file_path, 'r') as file:
+        email_content = json.load(file)
+
+    result = await process_email(order_id="27201249613", email=email_content)
+
+    expected_result = {'status': 2, 'tracking_id': '287798I077590'}
+    assert result == expected_result, f"Expected {expected_result}, got {result}"

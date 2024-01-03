@@ -26,8 +26,7 @@ async def run_external_id(external_id: str, save: int, send: int) -> None:
         logger.info(f"Processing email from date: `{email['receivedDateTime']}`")
         if save:
             with open(
-                f"test/fixtures/{external_id}_{email['receivedDateTime']}.json",
-                "w"
+                f"test/fixtures/{external_id}_{email['receivedDateTime']}.json", "w"
             ) as f:
                 json.dump(email, f, indent=2)
         open_api_json = await process_email(order_id, email)
